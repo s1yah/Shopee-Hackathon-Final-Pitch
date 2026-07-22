@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pydantic
+thefuzz
+
+Pillow
+streamlit
+langchain
+sqlalchemy
+requests

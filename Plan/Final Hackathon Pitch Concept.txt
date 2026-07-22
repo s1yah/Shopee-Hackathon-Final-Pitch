@@ -1,0 +1,43 @@
+PIPELINE A: THE LIVE MATCHER (Domain Specific - Runs on every incoming pair)
+=============================================================================
+[Shop Name A & B + Logos]
+       │
+       ▼
+[Stage 1: Preprocessing] ──► Direct Match? ────────► [PASS / DONE] (~0.01 ms)
+ (Includes Regex for common words like Shop/Store)
+       │
+       ▼
+[Stage 2: Acronym / Initials CPU Guard] ───────► Initials Match? ──────► [PASS / DONE] (~0.05 ms)
+       │
+       ▼
+[Stage 3: Whitespace Removal]
+
+[Stage 4: Fuzzy Distance Scoring] ─────────────► High Score (>85%)? ──► [PASS / DONE] (~0.5 ms)
+       │                                       ► Low Score (<40%)?  ──► [REJECT / DONE]
+       ▼
+[Stage 5: Visual Pre-filter (CLIP)] ───────────► Compare Logos ────────► [PASS/REJECT if High Confidence] 
+ (Triggered ONLY for ambiguous 40%-85% scores)
+       │
+       ▼
+[Stage 6: Selective Rule Retrieval] ───────────► Fetch relevant ACTIVE rules from Rule Bank 
+ (e.g., fetch Rule #24 for geographic multi-storefront cases)
+       │
+       ▼
+[Stage 7: Vision-LLM Judgment] ────────────────► Output Verdict + Rationale + Signals Relied On (~2-3s)
+
+
+PIPELINE B: THE MAINTENANCE HARNESS & RULE SCORECARD (Domain Agnostic - Runs periodically)
+=============================================================================================
+[At least 20-Pair Evaluation Dataset]
+       │
+       ▼
+[Rule Scorecard Evaluation Loop] ──────────────► Test LLM accuracy with each rule turned On vs Off
+       │
+       ▼
+[Performance Dashboard / Human-in-the-Loop] ───► Review rule lift (e.g., Rule X provides 0% lift)
+       │
+       ▼
+[Rule State Machine Manager (Human Approves Changes)]
+ ├──► ACTIVE: Rule is working (e.g., +5% lift). Keep in LLM retrieval pool.
+ ├──► ARCHIVED (Low Impact): 0% lift. Deactivate from LLM to save cost, but keep in DB for future reference.
+ └──► MIGRATED (Handled by Regex): 0% lift because Stage 1 handles it now. Deactivate from LLM, keep as living documentation for engineering team.
